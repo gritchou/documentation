@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<link rel="stylesheet" href="index.css">
+</head>
+
+<body>
+	<nav id="navbar">
+		<header>Indexing Methods</header>
+		<a class="nav-link" href="#Add_Objects">Add Objects</a>
+		<a class="nav-link" href="#Save_Objects">Save Objects</a>
+		<a class="nav-link" href="#Partial_Update_Objects">Partial Update Objects</a>
+		<a class="nav-link" href="#Delete_Objects">Delete Objects</a>
+		<a class="nav-link" href="#Replace_All_Objects">Replace All Objects</a>
+	</nav>
+	<main id="main-doc">
+		<section class="main-section" id="Add_Objects">
+			<header>Add Objects</header>
+			<h3>Add multiple objects</h3>
+			<div class="code">
+				<code>index.saveObjects(array objects)</code>
+			</div>
+			<div class="code">
+				<code>index.saveObjects(array objects, {
+					  // All the following parameters are optional
+					  autoGenerateObjectIDIfNotExist: boolean,
+					  // any other requestOptions
+					})
+				</code>
+			</div>
+			<h3>Add a single object</h3>
+			<div class="code">
+				<code>index.saveObject(object object)</code>
+			</div>
+			<div class="code">
+				<code>index.saveObject(object object, {
+					  // All the following parameters are optional
+					  autoGenerateObjectIDIfNotExist: boolean,
+					  // any other requestOptions
+					})</code>
+			</div>
+			<h3>About this method</h3>
+			<p>Add new objects to an index.
+
+				This method allows you to create records on your index by sending one or more objects. Each object contains a set of attributes and values, which represents a full
+				record on an index.<br>
+
+				If the index targeted by this operation doesn’t exist yet, it’s automatically created.<br>
+
+				There is no limit to the number of objects that can be passed, but a size limit of 1 GB on the total request. For performance reasons, it’s recommended to push
+				batches of ~10 MB of payload.<br>
+
+				Batching records allows you to reduce the number of network calls required for multiple operations. But note that each indexed object counts as a single indexing
+				operation.<br>
+
+				When adding large numbers of objects, or large sizes, be aware of our rate limit. You’ll know you’ve reached the rate limit when you start receiving errors on your
+				indexing operations. This can only be resolved if you wait before sending any further indexing operations.
+			</p>
+		</section>
+		<section class="main-section" id="Save_Objects">
+			<header>Save Objects</header>
+			<h3>Update multiple objects</h3>
+			<div class="code">
+				<code>
+					index.saveObjects(array objects)
+				</code>
+			</div>
+			<div class="code">
+				<code>
+					index.saveObjects(array objects, {
+					autoGenerateObjectIDIfNotExist: boolean
+					// any other requestOptions
+					})
+				</code>
+			</div>
+			<h3>Update a single object</h3>
+			<div class="code">
+				<code>
+					index.saveObject(object object)
+				</code>
+			</div>
+			<div class="code">
+				<code>
+					index.saveObject(object object, {
+					autoGenerateObjectIDIfNotExist: boolean
+					// any other requestOptions
+					})
+				</code>
+			</div>
+			<h3>About this method</h3>
+			<p>Replace an existing object with an updated set of attributes.<br>
+
+				The save method is used to redefine the entire set of an object’s attributes (except of course its objectID). In other words, it fully replaces an existing
+				object.<br>
+
+				Saving objects has the same effect as the add objects method if you specify objectIDs for every record.</p>
+
+			<p>This method differs from partial update objects in a significant way:</p>
+
+			<ul>
+				<li>
+					With saveObjects, you define an object’s full set of attributes. Attributes not specified will no longer exist. For example, if an existing object contains the
+					author attribute, but you don’t define it in your update call, it removes the author attribute from that object.
+				</li>
+				<li>
+					In contrast, when using partialUpdateObjects, you can single out one or more attributes and either create or update their content. If you don’t define an
+					existing
+					attribute in your update call, it doesn’t impact it.
+				</li>
+			</ul>
+			<p>
+				Using this method automatically chunks your records into batches of 1,000 objects, for performance reasons. If you’re indexing many records, and on a stable,
+				high-speed Internet connection, you may want to override the default batch size with a higher value, letting you send more records per request and shortening your
+				indexing time.
+			</p>
+			<p>Automatic batching is only available in the latest major versions of our PHP, Go, C#, Java, and Python clients.
+
+				When updating large numbers of objects, or large sizes, be aware of our rate limit. You’ll know you’ve reached the rate limit when you start receiving errors on
+				your indexing operations. This can only be resolved if you wait before sending any further indexing operations.</p>
+		</section>
+		<section class="main-section" id="Partial_Update_Objects">
+			<header>Partial Update Objects</header>
+			<h3>Update multiple objects</h3>
+			<div class="code">
+				index.partialUpdateObjects(array objects)
+			</div>
+			<div class="code">
+				index.partialUpdateObjects(array objects, {
+				// All the following parameters are optional
+				createIfNotExists: bool,
+				// + any requestOptions
+				})</div>
+			<h3>Update a single object</h3>
+			<div class="code">index.partialUpdateObject(object object)</div>
+			<div class="code">index.partialUpdateObject(object object, {
+				// All the following parameters are optional
+				createIfNotExists: bool,
+				// + any requestOptions
+				})</div>
+			<h3>About this method</h3>
+			<p>Update one or more attributes of an existing object.<br>
+
+				This method lets you update only a part of an existing object, either by adding new attributes or updating existing ones.<br>
+
+				You can partially update several objects in a single method call.<br>
+
+				If the index targeted by this operation doesn’t exist yet, it’s automatically created.</p>
+
+			<p>When updating many or large objects, be aware of our rate limit.</p>
+
+			<p>Specifying existing attributes updates them in the object, while specifying new attributes adds them. You need to use the saveObjects method to completely redefine
+				an existing object, or replace an object with a different one.</p>
+
+			<p>You can’t individually update nested attributes. Specifying a nested attribute treats it as a replacement of its first-level ancestor. To change nested attributes,
+				you need to use the saveObjects method. You can retrieve the object’s data by using the getObjects method.
+			</p>
+			<h3>Built-in operations</h3>
+			<p>For convenience, we provide five different built-in operations to update an attribute without pushing its entire value. These operations can be helpful if you don’t
+				have access to your initial data.</p>
+			<ul>
+				<li>Increment: increment a numeric attribute</li>
+				<li>Decrement: decrement a numeric attribute</li>
+				<li>Add: append a number or string element to an array attribute</li>
+				<li>Remove: remove all matching number or string elements from an array attribute</li>
+				<li>AddUnique: add a number or string element to an array attribute only if it’s not already present</li>
+				<li>IncrementFrom: increment a numeric integer attribute only if the provided value matches the current value, and otherwise ignore the whole object update. For
+					example, if you pass an IncrementFrom value of 2 for the version attribute, but the current value of the attribute is 1, the engine ignores the update. If the
+					object doesn’t exist, the engine only creates it if you pass an IncrementFrom value of 0.</li>
+				<li>IncrementSet: increment a numeric integer attribute only if the provided value is greater than the current value, and otherwise ignore the whole object update.
+					For example, if you pass an IncrementSet value of 2 for the version attribute, and the current value of the attribute is 1, the engine updates the object. If
+					the object doesn’t exist yet, the engine only creates it if you pass an IncrementSet value that’s greater than 0.</li>
+			</ul>
+			<p>You can specify an operation by providing an object with two following properties:</p>
+			<ul>
+				<li>_operation: the operation to apply on the attribute</li>
+				<li>value: the right-hand side argument to the operation (e.g., increment or decrement step, value to add or remove)</li>
+			</ul>
+			<p>Only the IncrementFrom and IncrementSet operations guarantee idempotent record updates. The other built-in operations aren’t idempotent and can cause unexpected
+				side-effects, unless you use them in combination with the idempotent operations. For example, if you’re using the Increment or Decrement operations in a concurrent
+				or multi-threaded environment, you may trigger it more than once and end up with incorrect data in your records.</p>
+		</section>
+		<section class="main-section" id="Delete_Objects">
+			<header>Delete Objects</header>
+			<h3>Delete multiple objects</h3>
+			<div class="code">
+				<code>
+					index.deleteObjects(array objectIDs)
+				</code>
+			</div>
+			<div class="code">
+				<code>
+					index.deleteObjects(array objectIDs, {
+						// + any requestOptions
+					})
+				</code>
+			</div>
+			<h3>Delete a single object</h3>
+			<div class="code">
+				<code>
+					index.deleteObject(string objectID)
+				</code>
+			</div>
+
+			<div class="code">
+				<code>
+					index.deleteObject(string objectID, {
+						// + any requestOptions
+						})
+				</code>
+			</div>
+			<h3>About this method</h3>
+			<p>Remove objects from an index using their objectID.<br>
+
+				This method enables you to remove one or more objects from an index.</p>
+
+			<p>There are two methods available to delete objects:</p>
+			<ul>
+				<li>
+					this one, which uses an objectID to identify objects
+				</li>
+				<li>
+					and deleteBy, which uses filters to identify objects.
+				</li>
+			</ul>
+			<p>
+				As with other batch operations, each record included in the batch counts as one operation. If you pass an objectID that doesn’t exist, it still counts as an
+				operation. This is because the engine doesn’t know if the record exists when attempting the operation.
+			</p>
+			<p>Removing all objects in an index doesn’t delete the index. You have to delete it manually with the deleteIndex method.</p>
+		</section>
+		<section class="main-section" id="Replace_All_Objects">
+			<header>Replace All Objects</header>
+			<div class="code">
+				<code>
+					index.replaceAllObjects(array objects)
+				</code>
+			</div>
+			<div class="code">
+				<code>
+					index.replaceAllObjects(array objects, {
+					// All the following parameters are optional
+					safe: bool,
+					// + any requestOptions
+					})
+				</code>
+			</div>
+			<h3>About this method</h3>
+			<p>Clears all objects from your index and replaces them with a new set of objects.<br>
+
+				Only your objects are replaced: all settings, synonyms, and query rules are untouched.<br>
+
+				This method performs an atomic reindex: it replaces all records in an index without any downtime.<br>
+
+				This method uses a temporary index. First, it copies your index’s settings, synonyms, and query rules to the temporary index. Then, it adds the objects you passed
+				to the temporary index. Finally, it replaces your index with the temporary one.</p>
+			<p>Before replacing all objects, make sure your source index exists. Our API creates a job even when an index doesn’t exist, but because it has no source index, the job
+				won’t be able to end. If you perform a waitTask for this job, or set the safe parameter to true while the source index doesn’t exist, the wait will never resolve.
+			</p>
+			<p>Using this method can significantly increase your indexing operations count. It costs the number of new records + 2 operations (copySettings and moveIndex). For
+				example, replacing all objects of an index with a new set of a million objects costs one million (and two) operations. Make sure you don’t exceed your record limit,
+				and be careful of the impact on your operations count.</p>
+			<p>Behind the scenes, using this method will generate a new, temporary index. If the API key used has restricted index access, the API will return an error when
+				attempting this operation. To fix this, make sure your API key has access to yourIndex and yourIndex_tmp_*.</p>
+		</section>
+	</main>
+</body>
+
+</html>
